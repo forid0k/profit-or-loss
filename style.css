@@ -1,0 +1,51 @@
+body {
+  background: linear-gradient(135deg, #0f0f0f, #1e1e1e);
+  color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 20px;
+  text-align: center;
+}
+h1 {
+  color: #00ffff;
+  font-size: 2.5rem;
+  text-shadow: 0 0 10px #00ffff;
+}
+.controls {
+  margin-bottom: 20px;
+}
+select {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  margin: 0 10px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 0 20px #00ffff33;
+}
+th, td {
+  padding: 14px;
+  border: 1px solid #333;
+}
+th {
+  background-color: #222;
+  color: #0ff;
+}
+tr:nth-child(even) {
+  background-color: #1a1a1a;
+}
+td.buy {
+  color: #00ff00;
+  font-weight: bold;
+  text-shadow: 0 0 5px #00ff00;
+}
+td.sell {
+  color: #ff4444;
+  font-weight: bold;
+  text-shadow: 0 0 5px #ff4444;
+}
