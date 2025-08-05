@@ -2,11 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Signal Generator</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signal Generator with Access Token</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    .controls {
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    select, button {
+      padding: 8px 12px;
+      margin: 0 8px;
+      font-size: 16px;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    .buy {
+      color: green;
+      font-weight: bold;
+    }
+    .sell {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
+
   <h1>🚀 Signal Generator</h1>
 
   <div class="controls">
@@ -24,15 +65,8 @@
       <option value="Volume">Volume</option>
       <option value="Price Action">Price Action</option>
     </select>
-  </div>
 
-  <div class="controls">
-    <label for="modeSelect">Mode:</label>
-    <select id="modeSelect">
-      <option value="auto">Auto Signal Generate</option>
-      <option value="manual">Manual Signal Generate</option>
-    </select>
-    <button id="manualGenerateBtn" style="display:none;">Generate Signal</button>
+    <button id="generateBtn" disabled>Generate Signal</button>
   </div>
 
   <table id="signalTable">
@@ -51,6 +85,99 @@
     </tbody>
   </table>
 
-  <script src="app.js"></script>
+  <script>
+    const API_BASE = "https://yourname.epizy.com"; // এখানে তোমার InfinityFree ডোমেইন বসাও
+
+    const tableBody = document.querySelector("#signalTable tbody");
+    const generateBtn = document.getElementById("generateBtn");
+
+    let userToken = null;
+
+    async function askToken() {
+      const tokenInput = prompt("Enter Access Token:");
+      if (!tokenInput) {
+        alert("Token is required to access the bot");
+        return askToken(); // পুনরায় চাইবে
+      }
+      const isValid = await validateToken(tokenInput);
+      if (isValid) {
+        userToken = tokenInput;
+        generateBtn.disabled = false;
+        alert("Access granted!");
+      } else {
+        alert("Invalid or expired token");
+        return askToken(); // পুনরায় চাইবে
+      }
+    }
+
+    async function validateToken(token) {
+      try {
+        const res = await fetch(`${API_BASE}/token.php?check=${token}`);
+        if (!res.ok) return false;
+        const data = await res.json();
+        return data.valid === true;
+      } catch {
+        return false;
+      }
+    }
+
+    function addSignalRow({ time, market, asset, timeframe, signal, strategy }) {
+      if (tableBody.querySelector("tr td")?.textContent.includes("Waiting for signal")) {
+        tableBody.innerHTML = "";
+      }
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${time}</td>
+        <td>${market}</td>
+        <td>${asset}</td>
+        <td>${timeframe}</td>
+        <td class="${signal.toLowerCase()}">${signal}</td>
+        <td>${strategy}</td>
+      `;
+      tableBody.prepend(row);
+    }
+
+    async function generateSignal() {
+      if (!userToken) {
+        alert("No access token. Please reload and enter a valid token.");
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/signal-api.php`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            token: userToken,
+            asset: document.getElementById("marketSelect").value,
+            strategy: document.getElementById("strategySelect").value
+          })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          addSignalRow({
+            time: new Date().toLocaleTimeString(),
+            market: "Real Market",
+            asset: document.getElementById("marketSelect").value,
+            timeframe: "1m",
+            signal: data.signal,
+            strategy: document.getElementById("strategySelect").value
+          });
+        } else {
+          alert(data.error || "Signal generation failed");
+        }
+      } catch (error) {
+        alert("Error contacting server");
+        console.error(error);
+      }
+    }
+
+    generateBtn.addEventListener("click", generateSignal);
+
+    // পেজ লোডের সাথে সাথে টোকেন চাইবে
+    askToken();
+  </script>
+
 </body>
 </html>
