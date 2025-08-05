@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>profit or loss</title>
+  <title>Signal Generator</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>🚀 0 Level</h1>
+  <h1>🚀 Signal Generator</h1>
+
   <div class="controls">
     <label for="marketSelect">Market:</label>
     <select id="marketSelect">
@@ -23,6 +24,15 @@
       <option value="Volume">Volume</option>
       <option value="Price Action">Price Action</option>
     </select>
+  </div>
+
+  <div class="controls">
+    <label for="modeSelect">Mode:</label>
+    <select id="modeSelect">
+      <option value="auto">Auto Signal Generate</option>
+      <option value="manual">Manual Signal Generate</option>
+    </select>
+    <button id="manualGenerateBtn" style="display:none;">Generate Signal</button>
   </div>
 
   <table id="signalTable">
@@ -41,7 +51,6 @@
     </tbody>
   </table>
 
-  <script src="strategy.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
