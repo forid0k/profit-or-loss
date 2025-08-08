@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Signal Generator with Access Token</title>
+  <title>Signal Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -21,10 +21,6 @@
       padding: 8px 12px;
       margin: 0 8px;
       font-size: 16px;
-    }
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
     }
     table {
       width: 100%;
@@ -66,7 +62,7 @@
       <option value="Price Action">Price Action</option>
     </select>
 
-    <button id="generateBtn" disabled>Generate Signal</button>
+    <button id="generateBtn">Generate Signal</button>
   </div>
 
   <table id="signalTable">
@@ -86,40 +82,10 @@
   </table>
 
   <script>
-    const API_BASE = "https://forid0k.page.gd/"; // এখানে তোমার InfinityFree ডোমেইন বসাও
+    const API_BASE = "https://forid0k.page.gd/";
 
     const tableBody = document.querySelector("#signalTable tbody");
     const generateBtn = document.getElementById("generateBtn");
-
-    let userToken = null;
-
-    async function askToken() {
-      const tokenInput = prompt("Enter Access Token:");
-      if (!tokenInput) {
-        alert("Token is required to access the bot");
-        return askToken(); // পুনরায় চাইবে
-      }
-      const isValid = await validateToken(tokenInput);
-      if (isValid) {
-        userToken = tokenInput;
-        generateBtn.disabled = false;
-        alert("Access granted!");
-      } else {
-        alert("Invalid or expired token");
-        return askToken(); // পুনরায় চাইবে
-      }
-    }
-
-    async function validateToken(token) {
-      try {
-        const res = await fetch(`${API_BASE}/token.php?check=${token}`);
-        if (!res.ok) return false;
-        const data = await res.json();
-        return data.valid === true;
-      } catch {
-        return false;
-      }
-    }
 
     function addSignalRow({ time, market, asset, timeframe, signal, strategy }) {
       if (tableBody.querySelector("tr td")?.textContent.includes("Waiting for signal")) {
@@ -138,16 +104,11 @@
     }
 
     async function generateSignal() {
-      if (!userToken) {
-        alert("No access token. Please reload and enter a valid token.");
-        return;
-      }
       try {
         const res = await fetch(`${API_BASE}/signal-api.php`, {
           method: "POST",
-          headers: {"Content-Type": "application/json"},
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            token: userToken,
             asset: document.getElementById("marketSelect").value,
             strategy: document.getElementById("strategySelect").value
           })
@@ -174,13 +135,7 @@
     }
 
     generateBtn.addEventListener("click", generateSignal);
-
-    // পেজ লোডের সাথে সাথে টোকেন চাইবে
-    askToken();
   </script>
 
 </body>
 </html>
-
-
-
