@@ -1,4 +1,4 @@
-const API_BASE = "https://forid0k.page.gd/"; // এখানে তোমার InfinityFree ডোমেইন বসাও
+const API_BASE = "https://forid0k.github.io/profit-or-loss/"; // এখানে তোমার InfinityFree ডোমেইন বসাও
 
 const tableBody = document.querySelector("#signalTable tbody");
 const modeSelect = document.getElementById("modeSelect");
@@ -67,5 +67,6 @@ modeSelect.addEventListener("change", () => {
 manualGenerateBtn.addEventListener("click", generateSignal);
 
 autoInterval = setInterval(generateSignal, 60000);
+
 
 
